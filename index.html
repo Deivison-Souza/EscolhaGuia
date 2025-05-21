@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EscolhaGuia - Guias de Pesca no Vale do Araguaia</title>
+    <style>
+        :root {
+            --primary-blue: #1a75ff;
+            --secondary-blue: #0056b3;
+            --primary-green: #2e8b57;
+            --light-blue: #e6f2ff;
+            --water-blue: #4da6ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, var(--light-blue), white);
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Carrossel de Fotos */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .carousel {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-arrow:hover {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .carousel-arrow.left {
+            left: 10px;
+        }
+        
+        .carousel-arrow.right {
+            right: 10px;
+        }
+        
+        /* Botão centralizado */
+        .booking-btn-container {
+            position: fixed;
+            bottom: 140px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 100;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .booking-btn {
+            background: linear-gradient(to right, var(--primary-green), var(--primary-blue));
+            color: white;
+            border: 3px solid white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            text-align: center;
+            display: inline-block;
+            min-width: 220px;
+        }
+        
+        .booking-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Seção de Guias */
+        .guides-section {
+            margin: 40px 0;
+        }
+        
+        .guides-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .guide-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .guide-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .guide-profile {
+            position: relative;
+            height: 250px;
+        }
+        
+        .guide-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .guide-info {
+            padding: 20px;
+        }
+        
+        .guide-name {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        
+        .guide-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .guide-gallery {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .guide-gallery img {
+            width: calc(33.333% - 7px);
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .guide-gallery img:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Modal de Agendamento */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: modalOpen 0.4s ease-out;
+        }
+        
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        input[type="datetime-local"] {
+            padding: 10px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, var(--primary-green), var(--primary-blue));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-green));
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .carousel-container {
+                height: 300px;
+            }
+            
+            .logo {
+                font-size: 2.4rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .guides-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .carousel-container {
+                height: 220px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .guides-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-btn {
+                font-size: 1rem;
+                padding: 12px 20px;
+                width: 90%;
+            }
+        }
+        
+        /* Modal para imagem ampliada */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 300;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow: auto;
+        }
+        
+        .image-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .image-close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Indicadores do carrossel */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 0 5px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-info {
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">EscolhaGuia</div>
+        <h1>Conheça o Vale do Araguaia</h1>
+        <p>Descubra as melhores experiências de pesca com guias especializados</p>
+    </header>
+    
+    <main class="container">
+        <!-- Carrossel de Fotos -->
+        <div class="carousel-container">
+            <div class="carousel">
+                <img src="Paisagens/Itacaiu_01.jpeg" alt="Pesca no Vale do Araguaia 1" />
+                <img src="Paisagens/Itacaiu_02.jpeg" alt="Pesca no Vale do Araguaia 2" />
+                <img src="Paisagens/Itacaiu_03.jpeg" alt="Pesca no Vale do Araguaia 3" />
+                <img src="Paisagens/Itacaiu_04.jpeg" alt="Pesca no Vale do Araguaia 4" />
+                <img src="Paisagens/Itacaiu_05.jpeg" alt="Pesca no Vale do Araguaia 5" />
+            </div>
+            <div class="carousel-arrow left">&#10094;</div>
+            <div class="carousel-arrow right">&#10095;</div>
+            <div class="carousel-indicators"></div>
+        </div>
+        
+        <!-- Botão centralizado -->
+        <div class="booking-btn-container">
+            <button class="booking-btn" id="book-btn">Agende Sua Pesca ou Passeio</button>
+        </div>
+        
+        <!-- Seção de Guias de Pesca -->
+        <section class="guides-section">
+            <h2>Nossos Guias de Pesca</h2>
+            <p>Conheça os melhores guias da região do Vale do Araguaia para tornar sua experiência inesquecível</p>
+            
+            <div class="guides-container">
+                <!-- Guia 1 -->
+                <div class="guide-card" data-guide-id="1" data-guide-name="Wilson Alves" data-guide-phone="5562996150617">
+                    <div class="guide-profile">
+                        <img src="WilsonAlves/wilson.jpeg" alt="Wilson Alves - Guia de Pesca">
+                    </div>
+                    <div class="guide-info">
+                        <h3 class="guide-name">Wilson Alves - Itacaiu</h3>
+                        <p class="guide-description">Com mais de 5 anos de experiência, Wilson conhece os melhores pontos de pesca do Rio Araguaia.</p>
+                        <div class="guide-gallery">
+                            <img src="WilsonAlves/01_Wilson.jpeg" alt="Captura com Wilson 1">
+                            <img src="WilsonAlves/02_Wilson.jpeg" alt="Captura com Wilson 2">
+                            <img src="WilsonAlves/03_Wilson.jpeg" alt="Captura com Wilson 3">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Guia 2 -->
+                <div class="guide-card" data-guide-id="2" data-guide-name="Ivan" data-guide-phone="5562996150617">
+                    <div class="guide-profile">
+                        <img src="Ivan/1_Ivan2.jpeg" alt="Ivan - Guia de Pesca">
+                    </div>
+                    <div class="guide-info">
+                        <h3 class="guide-name">Ivan - Itacaiu </h3>
+                        <p class="guide-description">Com mais de 5 anos de experiência, Wilson conhece os melhores pontos de pesca do Rio Araguaia.</p>
+                        <div class="guide-gallery">
+                            <img src="Ivan/2_Ivan.jpeg" alt="Captura com Ivan 1">
+                            <img src="Ivan/3_Ivan.jpeg" alt="Captura com Ivan 2">
+                            <img src="Ivan/4_Ivan.jpeg" alt="Captura com Ivan 3">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Guia 3 -->
+                <div class="guide-card" data-guide-id="3" data-guide-name="Quero ser um Guia" data-guide-phone="5562996150617">
+                    <div class="guide-profile">
+                        <img src="silhueta.png" alt="Quero ter minha foto aqui.">
+                    </div>
+                    <div class="guide-info">
+                        <h3 class="guide-name">Quero ter meu nome no site</h3>
+                        <p class="guide-description">Suas especializações e experiências!</p>
+                        <div class="guide-gallery">
+                            <img src="/api/placeholder/150/150" alt="Sua Imagem Aqui">
+                            <img src="/api/placeholder/150/150" alt="Sua Imagem Aqui">
+                            <img src="/api/placeholder/150/150" alt="Sua Imagem Aqui">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modal de Agendamento -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Agende Sua Aventura de Pesca</h2>
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="name">Seu Nome:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Seu Telefone (com DDD):</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Data:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="time">Horário:</label>
+                    <select id="time" name="time" required>
+                        <option value="">Selecione um horário</option>
+                        <!-- Opções serão preenchidas via JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="people">Número de Acompanhantes:</label>
+                    <select id="people" name="people" required>
+                        <option value="0">Apenas eu</option>
+                        <option value="1">1 acompanhante</option>
+                        <option value="2">2 acompanhantes</option>
+                        <option value="3">3 acompanhantes</option>
+                        <option value="4">4 acompanhantes</option>
+                        <option value="5">5 acompanhantes</option>
+                        <option value="6+">6 ou mais acompanhantes</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="guide">Escolha seu Guia:</label>
+                    <select id="guide" name="guide" required>
+                        <option value="3">Quero ser um Guia Profissional</option>
+                        <option value="">Selecione um guia</option>
+                        <option value="1">Wilson Alves - Itacaiu</option>
+                        <option value="2">Ivan - Itacaiu</option>
+                        
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Observações:</label>
+                    <textarea id="notes" name="notes" rows="4" placeholder="Informe preferências, restrições ou qualquer outra informação importante"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Agendar via WhatsApp</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para visualização de imagens -->
+    <div id="image-modal" class="image-modal">
+        <span class="image-close">&times;</span>
+        <img class="image-modal-content" id="expanded-image">
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>EscolhaGuia - Experiências de Pesca no Vale do Araguaia</h3>
+                <p>Descubra a beleza natural e as aventuras de pesca que o Vale do Araguaia tem a oferecer</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Sobre Nós</a>
+                <a href="#">Contato</a>
+                <a href="#">Política de Privacidade</a>
+            </div>
+            <p>&copy; 2025 EscolhaGuia - Todos os direitos reservados</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Carrossel de imagens
+        const carousel = document.querySelector('.carousel');
+        const images = carousel.querySelectorAll('img');
+        const leftArrow = document.querySelector('.carousel-arrow.left');
+        const rightArrow = document.querySelector('.carousel-arrow.right');
+        const indicatorsContainer = document.querySelector('.carousel-indicators');
+        
+        let currentIndex = 0;
+        const totalImages = images.length;
+        
+        // Criar indicadores
+        for (let i = 0; i < totalImages; i++) {
+            const indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            if (i === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => {
+                goToSlide(i);
+            });
+            indicatorsContainer.appendChild(indicator);
+        }
+        
+        const indicators = document.querySelectorAll('.indicator');
+        
+        function updateCarousel() {
+            carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+            
+            // Atualizar indicadores
+            indicators.forEach((indicator, index) => {
+                if (index === currentIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+        
+        function goToSlide(index) {
+            currentIndex = index;
+            updateCarousel();
+        }
+        
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateCarousel();
+        }
+        
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            updateCarousel();
+        }
+        
+        leftArrow.addEventListener('click', prevSlide);
+        rightArrow.addEventListener('click', nextSlide);
+        
+        // Auto-play do carrossel
+        let carouselInterval = setInterval(nextSlide, 5000);
+        
+        // Parar auto-play quando o mouse estiver sobre o carrossel
+        const carouselContainer = document.querySelector('.carousel-container');
+        carouselContainer.addEventListener('mouseenter', () => {
+            clearInterval(carouselInterval);
+        });
+        
+        carouselContainer.addEventListener('mouseleave', () => {
+            carouselInterval = setInterval(nextSlide, 5000);
+        });
+        
+        // Implementação de swipe para dispositivos móveis
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        carouselContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        carouselContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            } else if (touchEndX > touchStartX + 50) {
+                prevSlide();
+            }
+        }
+        
+        // Modal de agendamento
+        const bookBtn = document.getElementById('book-btn');
+        const bookingModal = document.getElementById('booking-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const bookingForm = document.getElementById('booking-form');
+        const dateInput = document.getElementById('date');
+        const timeSelect = document.getElementById('time');
+        
+        // Configurar data mínima (hoje)
+        const today = new Date();
+        const formattedToday = today.toISOString().split('T')[0];
+        dateInput.setAttribute('min', formattedToday);
+        dateInput.value = formattedToday;
+        
+        // Preencher seletor de horários com horas redondas (5:00 às 18:00)
+        function populateTimeOptions() {
+            timeSelect.innerHTML = '<option value="">Selecione um horário</option>';
+            
+            // Se a data selecionada for hoje, só mostre horários futuros
+            const selectedDate = new Date(dateInput.value);
+            const isToday = selectedDate.toDateString() === today.toDateString();
+            const currentHour = today.getHours();
+            
+            // Horários disponíveis entre 5h e 18h
+            for (let hour = 5; hour <= 18; hour++) {
+                // Pular horários passados se a data for hoje
+                if (isToday && hour <= currentHour) continue;
+                
+                const formattedHour = hour.toString().padStart(2, '0') + ':00';
+                const option = document.createElement('option');
+                option.value = formattedHour;
+                option.textContent = formattedHour;
+                timeSelect.appendChild(option);
+            }
+        }
+        
+        // Atualizar horários quando a data mudar
+        dateInput.addEventListener('change', populateTimeOptions);
+        
+        // Inicializar opções de horário
+        populateTimeOptions();
+        
+        bookBtn.addEventListener('click', () => {
+            bookingModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Impedir rolagem da página
+            populateTimeOptions(); // Garantir que as opções de horário estejam atualizadas
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            bookingModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaurar rolagem da página
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === bookingModal) {
+                bookingModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Pré-selecionar guia com base na seleção de cartão
+        const guideCards = document.querySelectorAll('.guide-card');
+        guideCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const guideId = card.getAttribute('data-guide-id');
+                document.getElementById('guide').value = guideId;
+                bookingModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                populateTimeOptions(); // Garantir que as opções de horário estejam atualizadas
+            });
+        });
+        
+        // Envio do formulário para WhatsApp
+        bookingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const people = document.getElementById('people').value;
+            const guideSelect = document.getElementById('guide');
+            const guideId = guideSelect.value;
+            const guideName = guideSelect.options[guideSelect.selectedIndex].text;
+            const notes = document.getElementById('notes').value;
+            
+            // Formatar data
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('pt-BR');
+            
+            // Encontrar número de telefone do guia selecionado
+            const selectedGuideCard = document.querySelector(`.guide-card[data-guide-id="${guideId}"]`);
+            const guidePhone = selectedGuideCard.getAttribute('data-guide-phone');
+            
+            // Montar mensagem para WhatsApp
+            let message = `*Nova Reserva de Pesca - EscolhaGuia*%0A%0A`;
+            message += `*Nome:* ${name}%0A`;
+            message += `*Telefone:* ${phone}%0A`;
+            message += `*Data:* ${formattedDate}%0A`;
+            message += `*Horário:* ${time}%0A`;
+            message += `*Nº de Acompanhantes:* ${people}%0A`;
+            message += `*Guia Escolhido:* ${guideName}%0A`;
+            
+            if (notes) {
+                message += `*Observações:* ${notes}%0A`;
+            }
+            
+            // Redirecionar para WhatsApp
+            window.open(`https://wa.me/${guidePhone}?text=${message}`, '_blank');
+            
+            // Fechar modal e limpar formulário
+            bookingModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            bookingForm.reset();
+            dateInput.value = formattedToday; // Resetar para o dia atual
+            populateTimeOptions(); // Atualizar os horários
+        });
+        
+        // Modal para visualização de imagens em tamanho maior
+        const imageModal = document.getElementById('image-modal');
+        const expandedImage = document.getElementById('expanded-image');
+        const imageClose = document.querySelector('.image-close');
+        
+        // Galeria de imagens dos guias
+        imageModal.addEventListener('click', () => {
+            imageModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    </script>
